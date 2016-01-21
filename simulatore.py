@@ -1,21 +1,23 @@
 from random import randint
 import numpy as np
 from utility import printLog
-from variabili import _lambdaPArrivi, _dateTest, tempiAttesa, upHofinito, upnumeroClientiPacchi, upnumeroClientiPensioni
+from variabili import upNumClientiTot, setLambda, appendmuM, appendTempiAttesa, _lambdaPArrivi, _dateTest, upHofinito, upnumeroClientiPacchi, upnumeroClientiPensioni
 
 # ###################################################################################
 # ############################## SIMULATORE #########################################
 # ###################################################################################
 
 
-def source(env, numClienti, risorse):
-    poissonDistribution = np.random.poisson(_lambdaPArrivi, numClienti)
+def source(env, risorse):
+    numClienti = np.random.poisson(34.95, 1)[0]  # 34.95 = 1/(103/3600)
+    upNumClientiTot(numClienti)
     cliente = 0
-    for x in poissonDistribution:
+    for x in range(numClienti):
         cliente += 1
         c = risorsa(env, 'Cliente' + str(cliente), "tagliaCode", risorse)
         env.process(c)
-        t = x
+        t = np.random.exponential(_lambdaPArrivi, size=None)
+        setLambda(t)
         yield env.timeout(t)
 
 
@@ -27,11 +29,13 @@ def risorsa(env, name, tipoRisorsa, risorse):
         yield req
 
         wait = env.now - arrive
-        tempiAttesa[tipoRisorsa].append(wait)
+        appendTempiAttesa(tipoRisorsa, wait)
 
         printLog(_dateTest, '%7.4f - %s - Ho aspettato %s' % (env.now, name, wait))
 
         tempoDiServizio = (np.random.exponential(scale=risorse[tipoRisorsa][1], size=None)) if tipoRisorsa != "tagliaCode" else 7.5
+        appendmuM(tipoRisorsa, tempoDiServizio)
+
         yield env.timeout(tempoDiServizio)
         printLog(_dateTest, '%7.4f - %s - Ho finito in %s' % (env.now, name, tipoRisorsa))
 

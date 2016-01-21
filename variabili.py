@@ -1,22 +1,67 @@
 import datetime
+import numpy as np
 
 # ###################################################################################
 # ########################### VARIABILI GLOBALI #####################################
 # ###################################################################################
 
-_numeroServentiSportelloPensioni = 1
+_numeroServentiSportelloPensioni = 2
 _numeroServentiSportelloPacchi = 1
-_tempoServizioTagliaCode = 7.5
-_tempoServizioSportelloPensioni = 192.2381876
-_tempoServizioSportelloPacchi = 316
+_tempoServizioTagliaCode = 10
+_tempoServizioSportelloPensioni = 175.1439301
+_tempoServizioSportelloPacchi = 239.7955325
 _lambdaPArrivi = 103.0141151
 _tempoMassimoSimulazione = 5400  # None se non si vuole limite
 _dateTest = datetime.datetime.now().strftime('%Y%m%d_%H-%M-%S')
 
 tempiAttesa = {"tagliaCode": [], "sportelloPensioni": [], "sportelloPacchi": []}
+lambdaM = []
+muM = {"tagliaCode": [], "sportelloPensioni": [], "sportelloPacchi": []}
 numeroClientiPensioni = 0
 numeroClientiPacchi = 0
 hoFinito = 0
+numClientiTotali = 0
+
+
+def upNumClientiTot(quanti):
+    global numClientiTotali
+    numClientiTotali += quanti
+
+
+def getNumClientiTot():
+    global numClientiTotali
+    return numClientiTotali
+
+
+def setLambda(lambda_t):
+    lambdaM.append(lambda_t)
+
+
+def getLambda():
+    return np.mean(lambdaM)
+
+
+def flushAll():
+    global tempiAttesa, lambdaM, muM
+    tempiAttesa = {"tagliaCode": [], "sportelloPensioni": [], "sportelloPacchi": []}
+    lambdaM = []
+    muM = {"tagliaCode": [], "sportelloPensioni": [], "sportelloPacchi": []}
+
+
+def appendTempiAttesa(tipoRisorsa, wait):
+    tempiAttesa[tipoRisorsa].append(wait)
+
+
+def getMediaTempiAttesa():
+    return (np.mean(tempiAttesa["tagliaCode"]), np.mean(tempiAttesa["sportelloPensioni"]), np.mean(tempiAttesa["sportelloPacchi"]))
+
+
+def appendmuM(tipoRisorsa, cosa):
+    muM[tipoRisorsa].append(cosa)
+
+
+def getMediamuM():
+    return (np.mean(muM["sportelloPensioni"]), np.mean(muM["sportelloPacchi"]))
 
 
 def upHofinito():
