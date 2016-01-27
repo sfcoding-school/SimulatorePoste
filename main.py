@@ -1,45 +1,103 @@
 import simpy
-from utility import printLog
+from utility import printLog, calcolaMediaRighe, calcolaMedia, calcolaVarianzaPensioni
 from resource import SportelloPensioniC, SportelloPacchiC, TagliaCode
 from simulatore import source
-from variabili import getNumClientiTot, getLambda, getMediamuM, flushAll, getMediaTempiAttesa, _numeroServentiSportelloPensioni, _numeroServentiSportelloPacchi, _tempoServizioTagliaCode, _tempoServizioSportelloPensioni, _tempoServizioSportelloPacchi, _lambdaPArrivi, _tempoMassimoSimulazione, _dateTest, getHofinito, getnumeroClientiPacchi, getnumeroClientiPensioni
+from variabili import getNumClientiTot, getAttesePensioni, getLambda, getMediamuM, getMediaTempiAttesa, _numeroServentiSportelloPensioni, _numeroServentiSportelloPacchi, _tempoServizioTagliaCode, _tempoServizioSportelloPensioni, _tempoServizioSportelloPacchi, _lambdaPArrivi, _tempoMassimoSimulazione, _dateTest, getHofinito, getnumeroClientiPacchi, getnumeroClientiPensioni
 
 from script import contiFinaliForse
+import numpy as np
 
-quanteRipetizioni = 100
+quanteRipetizioni = 1000
+matriceTempiAttesaSportelloPensioni = []
 MediaAtteseTotPensioni = []
+mediaRighe = []
 roMaggiori = 0
 
 
+def checkStazio(mMedieLista):
+    temp = mMedieLista[max(0, len(mMedieLista) - 10):]
+    mean = np.mean(temp)
+    for x in range(1, 5):
+        if abs(temp[x+4] - mean) > 2:
+            return False
+    return True
+
+
 def main(env):
-    print("quanteRipetizioni %s" % quanteRipetizioni)
-    for p in range(quanteRipetizioni):
-        env.process(source(env, risorse))  # probabilmente _numeroClienti da variare (?)
+    varianzaDelleMedie = 0
+    stazionario = finitoIlTest = False
+    mediaDelleMedieLista = []
+    mediaRighe = []
+    finale = []
+    p = 0
+    r = -1
+
+    while not finitoIlTest:
+        env.process(source(env, risorse))
         env.run(until=_tempoMassimoSimulazione*(p+1))
-        printLog(_dateTest, "--------------------------------" + str(env.now) + "----------------------------------------")
-        printLog(_dateTest, "\nNumero clienti: %s\tPersoneTerminate: %s" % (getNumClientiTot(), getHofinito()))
-        printLog(_dateTest, "numeroClientiPensioni: %s\tnumeroClientiPacchi: %s\n" % (getnumeroClientiPensioni(), getnumeroClientiPacchi()))
+        p += 1
+        matriceTempiAttesaSportelloPensioni.append(getAttesePensioni())
+        mediaRighe = calcolaMediaRighe(matriceTempiAttesaSportelloPensioni)
+        if p > 1:
+            varianzaDelleMedie = calcolaVarianzaPensioni(mediaRighe)
+            mediaDelleMedie = calcolaMedia(mediaRighe)
+            if stazionario:
+                finale.append(mediaDelleMedie)
+                r += 1
+            else:
+                mediaDelleMedieLista.append(mediaDelleMedie)
+        if p > 100 and checkStazio(mediaDelleMedieLista):
+            stazionario = True
+        if r == 100:
+            finitoIlTest = True
+    # test(mediaDelleMedieLista)
+    printLog(_dateTest, "numClienti: " + str(getNumClientiTot()))
+    printLog(_dateTest, "tempo arrivo medio: " + str(getLambda()) + " \tTeorico: 110")
+    printLog(_dateTest, "tempo servizio medio:" + str(getMediamuM()[0]) + " \tTeorico: 172")
+    printLog(_dateTest, str(roMaggiori))
+    printLog(_dateTest, str([mediaDelleMedieLista, finale]))
+    contiFinaliForse(mediaDelleMedieLista, finale)
+
+
+def main2(env):
+    print("quanteRipetizioni %s" % quanteRipetizioni)
+    varianzaDelleMedie = 0
+    for p in range(quanteRipetizioni):
+        env.process(source(env, risorse))
+        env.run(until=_tempoMassimoSimulazione*(p+1))
+        # printLog(_dateTest, "--------------------------------" + str(env.now) + "----------------------------------------")
+        # printLog(_dateTest, "\nNumero clienti: %s\tPersoneTerminate: %s" % (getNumClientiTot(), getHofinito()))
+        # printLog(_dateTest, "numeroClientiPensioni: %s\tnumeroClientiPacchi: %s\n" % (getnumeroClientiPensioni(), getnumeroClientiPacchi()))
         # printLog(_dateTest, "MediaPersoneInCoda\nTagliaCode: %s\tSportelloPensioni: %s\tSportelloPacchi: %s\n" % (np.average([x[2] for x in tagliaCode.data]), np.average([x[2] for x in sportelloPensioni.data]), np.average([x[2] for x in sportelloPacchi.data])))
 
-        printLog(_dateTest, "MediaAttesa (secondi)\nTagliaCode: %s\tSportelloPensioni: %s\tSportelloPacchi: %s" % getMediaTempiAttesa())
+        matriceTempiAttesaSportelloPensioni.append(getAttesePensioni())
+        mediaRighe = calcolaMediaRighe(matriceTempiAttesaSportelloPensioni)
+        if p != 0:
+            varianzaDelleMedie = calcolaVarianzaPensioni(mediaRighe)
+            mediaDelleMedie = calcolaMedia(mediaRighe)
+            # printLog(_dateTest, "mediaDelleMedie: %s \t varianza: %s \t 1/s^2(?): %s" % (mediaDelleMedie, varianzaDelleMedie, float(1/varianzaDelleMedie)))
+
+        # printLog(_dateTest, "MediaAttesa (secondi)\nTagliaCode: %s\tSportelloPensioni: %s\tSportelloPacchi: %s" % getMediaTempiAttesa())
         lambdaVar = 1/getLambda()
-        printLog(_dateTest, "Lambda medio: %s" % lambdaVar)
+        # print("Lambda medio: %s" % lambdaVar)
         a = getMediamuM()
-        MediaAtteseTotPensioni.append(getMediaTempiAttesa()[1])
-        printLog(_dateTest, "MediaMU (secondi-1)\nSportelloPensioni: %s\tSportelloPacchi: %s\n" % (a[0], a[1]))
-        ro1 = lambdaVar * _tempoServizioTagliaCode
+        # ro1 = lambdaVar * _tempoServizioTagliaCode
         ro2 = (lambdaVar*(83/100) * a[0])/(_numeroServentiSportelloPensioni)
-        ro3 = (lambdaVar*(17/100) * a[1])/(_numeroServentiSportelloPacchi)
-        if ro1 > 1 or ro2 > 1 or ro3 > 1:
+        # ro3 = (lambdaVar*(17/100) * a[1])/(_numeroServentiSportelloPacchi)
+        if ro2 > 1:  # ro1 > 1 or  or ro3 > 1:
             global roMaggiori
             roMaggiori += 1
             # print(lambdaVar, a[0], a[1], ro2, ro3)
-        printLog(_dateTest, "Rho \nTagliaCode: %s\tSportelloPensioni: %s\tSportelloPacchi: %s" % (ro1, ro2, ro3))
+        # printLog(_dateTest, "Rho \nTagliaCode: %s\tSportelloPensioni: %s\tSportelloPacchi: %s" % (ro1, ro2, ro3))
         # flushAll()
-    print(getNumClientiTot())
-    MediaAtteseTotPensioni.pop(0)
-    contiFinaliForse(MediaAtteseTotPensioni)
+    print("numClienti: ", getNumClientiTot())
+    print("tempo arrivo medio: %s \tTeorico: %s" % (getLambda(), 110))
+    print("tempo servizio medio: %s \tTeorico: %s" % (getMediamuM()[0], 172))
     print(roMaggiori)
+    # print(matriceTempiAttesaSportelloPensioni)
+    print("------------------------------------------")
+    contiFinaliForse(mediaRighe[100:])
+    print("------------------------------------------")
 
 printLog(_dateTest, "--------SIMULAZIONE POSTE" + _dateTest + "---------")
 printLog(_dateTest, "_numeroServentiSportelloPensioni = " + str(_numeroServentiSportelloPensioni))

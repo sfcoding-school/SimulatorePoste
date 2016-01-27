@@ -5,12 +5,12 @@ import numpy as np
 # ########################### VARIABILI GLOBALI #####################################
 # ###################################################################################
 
-_numeroServentiSportelloPensioni = 2
+_numeroServentiSportelloPensioni = 3
 _numeroServentiSportelloPacchi = 1
 _tempoServizioTagliaCode = 10
-_tempoServizioSportelloPensioni = 175.1439301
-_tempoServizioSportelloPacchi = 239.7955325
-_lambdaPArrivi = 103.0141151
+_tempoServizioSportelloPensioni = 173
+_tempoServizioSportelloPacchi = 240
+_lambdaPArrivi = 110
 _tempoMassimoSimulazione = 5400  # None se non si vuole limite
 _dateTest = datetime.datetime.now().strftime('%Y%m%d_%H-%M-%S')
 
@@ -54,6 +54,12 @@ def appendTempiAttesa(tipoRisorsa, wait):
 
 def getMediaTempiAttesa():
     return (np.mean(tempiAttesa["tagliaCode"]), np.mean(tempiAttesa["sportelloPensioni"]), np.mean(tempiAttesa["sportelloPacchi"]))
+
+
+def getAttesePensioni():
+    temp = list(tempiAttesa["sportelloPensioni"])
+    tempiAttesa["sportelloPensioni"] = []
+    return temp
 
 
 def appendmuM(tipoRisorsa, cosa):
