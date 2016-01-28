@@ -24,7 +24,7 @@ def source(env, risorse):
 
 def risorsa(env, name, tipoRisorsa, risorse):
     arrive = env.now
-    # printLog(_dateTest, '%7.4f - %s - Sono arrivato in %s' % (arrive, name, tipoRisorsa))
+    printLog(_dateTest, '%7.4f - %s - Sono arrivato in %s' % (arrive, name, tipoRisorsa))
 
     with risorse[tipoRisorsa][0].request() as req:
         yield req
@@ -32,13 +32,13 @@ def risorsa(env, name, tipoRisorsa, risorse):
         wait = env.now - arrive
         appendTempiAttesa(tipoRisorsa, wait)
 
-        # printLog(_dateTest, '%7.4f - %s - Ho aspettato %s' % (env.now, name, wait))
+        printLog(_dateTest, '%7.4f - %s - Ho aspettato %s' % (env.now, name, wait))
 
         tempoDiServizio = (np.random.exponential(scale=risorse[tipoRisorsa][1], size=None)) if tipoRisorsa != "tagliaCode" else 7.5
         appendmuM(tipoRisorsa, tempoDiServizio)
 
         yield env.timeout(tempoDiServizio)
-        # printLog(_dateTest, '%7.4f - %s - Ho finito in %s' % (env.now, name, tipoRisorsa))
+        printLog(_dateTest, '%7.4f - %s - Ho finito in %s' % (env.now, name, tipoRisorsa))
 
         if tipoRisorsa == "tagliaCode":
             if randint(0, 100) < 83:
