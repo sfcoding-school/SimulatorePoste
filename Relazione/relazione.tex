@@ -1,0 +1,714 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University/School Laboratory Report
+% LaTeX Template
+% Version 3.1 (25/3/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Linux and Unix Users Group at Virginia Tech Wiki 
+% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage{float}
+\usepackage{pgfplots}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{chains,shapes.multipart}
+\usetikzlibrary{shapes,calc}
+\usetikzlibrary{automata,positioning}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx} % Required for the inclusion of images
+\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Progetto di Simulazione \\ Ufficio Postale} % Title
+
+\author{Federico \textsc{Corò}} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+%\begin{center}
+%\begin{tabular}{l r}
+%%Date Performed: & January 1, 2012 \\ % Date the experiment was performed
+%%Partners: & James Smith \\ % Partner names
+%%& Mary Smith \\
+%Instructor: & Tasso S. % Instructor/supervisor
+%\end{tabular}
+%\end{center}
+
+% If you wish to include an abstract, uncomment the lines below
+% \begin{abstract}
+% Abstract text
+% \end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Obiettivo}
+
+Implementare e convalidare un simulatore rispetto ad un sistema vero.
+
+\subsection{Testo del progetto}
+\label{definitions}
+Il direttore dell’ufficio postale centrale di Ponte Valleceppi ha problemi per determinare il numero
+di impiegati da avere allo sportello con il pubblico in uno dei periodi di maggiore affluenza.
+Poiché una tua amica si lagna spesso delle attese ti ha sfidato a mettere in pratica la tua
+preparazione sulla teoria delle code, tu ti incarichi del compito di aiutare il direttore.
+Decidi quindi – a causa della complessità di decisione e di diniego, dell’abilità di aggiungere o
+togliere impiegati (che incrementano o decrementano il $\mu$ di canale) e altre complessità - di
+simulare il modello di sistema.
+Sviluppa il modello di simulazione e implementalo nel linguaggio che tu desideri.
+Tenta di stimare, a partire da tue reali osservazioni su alcuni periodi critici, i modelli di arrivo e di
+servizio, così come la disciplina delle code.
+Usa parte delle osservazioni per sviluppare le distribuzioni empiriche e convalida poi il simulatore
+usando le rimanenti osservazioni (al 90\% del livello di confidenza).
+Quindi cerca di determinare le soluzioni per i problemi del direttore.
+ 
+%----------------------------------------------------------------------------------------
+%	SECTION 2
+%----------------------------------------------------------------------------------------
+
+\section{Raccolta ed analisi dei dati}
+Per prima cosa abbiamo raccolto dati dal sistema reale per determinare schema e processi che regolano questo sistema in esame. Ci siamo quindi recati al'ufficio postale per rilevare i tempi di interarrivo dei clienti ai vari sportelli ed i tempi di servizio degli stessi.\\
+Abbiamo raccolto 43 campioni per quanto riguarda l'arrivo nel sistema, ogni persona era poi obbligata a passare per un tagliacode che abbiamo poi considerato come un $M/D/1$, con tempo di servizio di 7.5 secondi.\\
+Di queste 43 persone, 7 hanno usufruito dello sportello pacchi e 33 i restanti sportelli.\\
+Da questi dati abbiamo innanzi tutto ricavato media e deviazione standard campionaria dei vari processi per cercare di determinare quale distribuzione di probabilità potesse modellarli al meglio:
+Per tutti e 3 i processi studiati si ha che queste sono uguali quindi potranno essere modellate tramite distribuzioni esponenziali.\\
+Si è quindi validato i processi studiati, per quanto riguarda l'arrivo al sistema e i tempi di servizio per lo sportello ''Pensioni e varie'' si è utilizzato il metodo del Goodness of Fit. Per lo sportello ''Pacchi'' si è utilizzato Kolmogorov-Smirnov, tutte queste validano tra il $P_{10}$ e $P_{90}$.\\
+Di seguito le tabelle riguardanti la validazione dei processi.\\
+
+\begin{table}[H]
+\centering
+\caption{Arrivo al sistema}
+\label{my-label}
+\begin{tabular}{llllll}
+\hline
+Categorie & Intervalli         & \begin{tabular}[c]{@{}l@{}}Quantità\\ Osservate\\ $f_i$\end{tabular} & \begin{tabular}[c]{@{}l@{}}Probabilità\\ teoriche\end{tabular} & \begin{tabular}[c]{@{}l@{}}Quantità\\ Teoriche\\ $F_i$\end{tabular} & $\frac{(f_i - F_i)^2}{F_i}$ \\ \hline
+1         & 0 - 53             & 45                                                                   & 0,3808                                                         & 49,1278                                                             & 0,3468                      \\
+2         & 53 - 130           & 42                                                                   & 0,3106                                                         & 40,0683                                                             & 0,0931                      \\
+3         & 130 - $\infty$     & 42                                                                   & 0,3085                                                         & 39,8037                                                             & 0,1211                      \\ \cline{3-6} 
+          &                    & 129                                                                  & 1                                                              & 129                                                                 & 0,5611                      \\
+          & $\bar{x} = 110,55$ &                                                                      & $s = 95,47$                                                    &                                                                     &                             \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Sportello Pensioni}
+\label{my-label}
+\begin{tabular}{llllll}
+\hline
+Categorie & Intervalli         & \begin{tabular}[c]{@{}l@{}}Quantità\\ Osservate\\ $f_i$\end{tabular} & \begin{tabular}[c]{@{}l@{}}Probabilità\\ teoriche\end{tabular} & \begin{tabular}[c]{@{}l@{}}Quantità\\ Teoriche\\ $F_i$\end{tabular} & $\frac{(f_i - F_i)^2}{F_i}$ \\ \hline
+1         & 0 - 100            & 45                                                                   & 0,43501663                                                     & 43,06664637                                                         & 0,08679236934               \\
+2         & 100 - 200          & 21                                                                   & 0,2457771616                                                   & 24,331939                                                           & 0,45626522                  \\
+3         & 200 - 300          & 18                                                                   & 0,1388600091                                                   & 13,7471409                                                          & 1,315677979                 \\
+4         & 300 - $\infty$     & 15                                                                   & 0,1803461994                                                   & 17,85427374                                                         & 0,456298514                 \\ \cline{3-6} 
+          &                    & 99                                                                   & 1                                                              & 99                                                                  & 2,3105                      \\
+          & $\bar{x} = 172,75$ &                                                                      & $s = 177,53$                                                   &                                                                     &                             \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Sportllo Pacchi, media: $248,85$, varianza: $230,73$}
+\label{my-label}
+\begin{tabular}{lllllll}
+\hline
+Intervalli     & \begin{tabular}[c]{@{}l@{}}Frequenze\\ osservate\end{tabular} & $f(i)$ & $p(i)$ & \begin{tabular}[c]{@{}l@{}}Cumulativa\\ osservata\\ $d_i$\end{tabular} & \begin{tabular}[c]{@{}l@{}}Cumulativa\\ teorica\\ $D_i$\end{tabular} & \begin{tabular}[c]{@{}l@{}}Differenza\\ assoluta\\ $D = |d_i - D_i|$\end{tabular} \\ \hline
+0 - 300        & 15                                                            & 0,7142 & 0,7004 & 0,7004                                                                 & 0,7142                                                               & 0,0138                                                                            \\
+300 - 400      & 3                                                             & 0,1428 & 0,0991 & 0,7995                                                                 & 0,8571                                                               & 0,0575                                                                            \\
+400 - $\infty$ & 3                                                             & 0,1428 & 0,2004 & 1                                                                      & 1                                                                    & 0                                                                                 \\
+               &                                                               & 1      & 1      &                                                                        &                                                                      &                                                                                  
+\end{tabular}
+\end{table}
+
+Abbiamo quindi modellato il sistema come in figura \ref{fig:modelloSistema}, con i seguenti parametri:\\
+$\lambda = \frac{1}{103}$, arrivo al sistema.\\
+Le probabilità di andare nei due sportelli rispettivamente $\frac{83}{100}$ e $\frac{17}{100}$.\\
+I tempi di servizio sono $\mu_P = \frac{1}{239}$ e $\mu_A = \frac{1}{175}$, portandoci ad avere un $\rho$ di: $\rho_P = 0.394$ e $\rho_A = 0.705$, considerando per quest'ultimo $m=2$
+
+
+\begin{figure}[H]
+\begin{tikzpicture}[>=latex]
+% the figures
+\draw (2,-0.5) rectangle (3,0.5);
+\foreach \i in {1,...,4}
+  \draw (3cm-\i*6pt,0.5) -- +(0,-1cm);
+\draw (3.5,0) circle [radius=0.5cm];
+
+\draw (6.5,0.5) rectangle (7.5,1.5);
+\foreach \i in {1,...,4}
+  \draw (7.5cm-\i*6pt,0.5) -- +(0,1cm);
+\draw (8,1) circle [radius=0.5cm];
+
+\draw (6.5,-1.5) rectangle (7.5,-0.5);
+\foreach \i in {1,...,4}
+  \draw (7.5cm-\i*6pt,-1.5) -- +(0,1cm);
+\draw (8,-1) circle [radius=0.5cm];
+ 
+
+% the arrows
+\draw[->] (0,0) -- (2,0);
+\draw[-] (4,0) -- (5,1);
+\draw[-] (4,0) -- (5,-1);
+\draw[->] (5,1) -- (6.5,1);
+\draw[->] (5,-1) -- (6.5,-1);
+\draw[->] (8.5,1) -- (9.5,1);
+\draw[->] (8.5,-1) -- (9.5,-1);
+
+% the labels
+\node at (-0.5,0) {$\lambda$};
+\node at (3.5,0) {T};
+\node at (8,1) {P};
+\node at (8,-1) {A};
+\node at (6,1.25) {$\frac{17}{100}$};
+\node at (6,-1.25) {$\frac{83}{100}$};
+
+\end{tikzpicture}
+ \caption[caption]
+    {\tabular[t]{@{}l@{}}T: Tagliacode, $M/D/1$ \\P: Sportello Pacchi, $M/M/1$ \\A: Sportello pensioni etc.., $M/M/m$ \endtabular}
+    \label{fig:modelloSistema}
+\end{figure}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 3
+%----------------------------------------------------------------------------------------
+
+\section{Implementazione e test Prove Ripetute}
+Per la realizzazione del simulatore si è usato come linguaggio di programmazione \textit{Python3.4}, utilizzando la libreria \textit{SimPy}.\\
+Si riesce quindi grazie a questo ambientie a simulare per un tempo prefissato un processo che gestisce gli arrivi dei clienti nell'ufficio ed un processo per ogni utente che arriva ad uno dei vari sportelli. Il numero di sportelli e i tempi sono parametri da passare al sistema: ogni sportello è rappresentato come una risorsa limitata a se stante e che gestisce una coda di attesa. Le distribuzioni statistiche generano i vari tempi di arrivo e servizio grazie alle funzioni predefinite nella libreria \textit{numpy}, basandosi sulle distribuzioni convalidate precedentemente. Infine, al termine del tempo di simulazione, vengono calcolati vari parametri del sistema, come tempo medio di attesa che sarà quello di nostro interesse.\\
+
+Si è poi applicato il metodo delle prove ripetute per convalidare il simulatore.\\
+Questo test è stato fatto due volte cambiando $m$ dello sportello A (Fig \ref{fig:modelloSistema}) rispettivamente a 2 e a 3.\\
+Il simulatore continua ad avanzare nel tempo (simulato) finchè esso non si stabilizza, da quel momento vengono effettuate 100 nuove osservazioni che saranno quelle da convalidare.
+
+\paragraph{Test con $M/M/2$}
+Numero di clienti introdotti nel sistema: 12540\\
+Tempo di arrivo medio al sistema calcolato nel simulatore: 101.84546661 (teorico: 103)\\
+Tempo di servizio medio calcolato nel simulatore: 171.984174488 (teorico: 172)\\
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[]
+
+	% \addplot[] is better than \addplot+[] here:
+	% it avoids scalings of the cycle list
+	\addplot
+	[mark=none,red,
+	 domain=0:108]
+	{301};
+	\addplot[only marks, color=black, mark=x]
+		coordinates {
+			(1, 63.12908466245246)
+(2, 116.20506465557291)
+(3, 195.90252024098686)
+(4, 187.13306625391894)
+(5, 193.6102677340606)
+(6, 184.08161522519688)
+(7, 171.1028589305023)
+(8, 172.5225946528589)
+(9, 190.34596448504269)
+(10, 182.7626711867066)
+(11, 171.3339414052316)
+(12, 164.6027861654408)
+(13, 181.99772701197975)
+(14, 185.06474568224948)
+(15, 192.35777657361422)
+(16, 190.4340974504078)
+(17, 195.66153037666612)
+(18, 189.91987269773244)
+(19, 189.4557065202249)
+(20, 187.6022094174528)
+(21, 193.23688094934116)
+(22, 190.29511192845064)
+(23, 185.36686751290745)
+(24, 202.56600679109658)
+(25, 214.3748158170027)
+(26, 212.75695286528122)
+(27, 214.3261256709698)
+(28, 248.7739424656765)
+(29, 255.69167366162918)
+(30, 249.62118400310234)
+(31, 253.09702057079977)
+(32, 247.2892933271437)
+(33, 241.9240189217729)
+(34, 238.55892139486713)
+(35, 241.53317847093183)
+(36, 235.45688878634098)
+(37, 237.5192006217645)
+(38, 250.5491068065475)
+(39, 254.8426063864037)
+(40, 250.97755085818395)
+(41, 246.92446258168297)
+(42, 243.62192221755322)
+(43, 252.72136499784872)
+(44, 257.13182638965316)
+(45, 262.91612281509845)
+(46, 258.350442363812)
+(47, 253.67609515585704)
+(48, 254.39015712172696)
+(49, 250.0503996904537)
+(50, 264.59293439696637)
+(51, 261.7714580775751)
+(52, 267.12345885010154)
+(53, 277.1810966866942)
+(54, 273.5434335430688)
+(55, 269.0976958113959)
+(56, 265.6959296543054)
+(57, 266.6463521663792)
+(58, 267.2756405571777)
+(59, 272.8419092197934)
+(60, 273.391905195665)
+(61, 272.8013067789509)
+(62, 289.3055753957086)
+(63, 296.37978165309516)
+(64, 296.8116660403502)
+(65, 292.450438828845)
+(66, 299.2149143646196)
+(67, 312.91319016093325)
+(68, 309.60381536866817)
+(69, 308.95382694559163)
+(70, 307.86178240846937)
+(71, 304.42389334576444)
+(72, 304.36616986445097)
+(73, 304.0017972328412)
+(74, 301.2464225941746)
+(75, 301.36309927999093)
+(76, 299.2983699776145)
+(77, 299.8465743253666)
+(78, 299.65981777171993)
+(79, 313.6969341172237)
+(80, 312.59325424908104)
+(81, 309.9565291388184)
+(82, 311.2092840377017)
+(83, 307.84371147990834)
+(84, 307.1597914650401)
+(85, 304.6361128669141)
+(86, 301.4611193875208)
+(87, 301.341216649542)
+(88, 301.84465147979415)
+(89, 306.41243390404014)
+(90, 308.5724574518217)
+(91, 313.9178576470204)
+(92, 313.8449912908524)
+(93, 311.2829004434824)
+(94, 311.64169242700615)
+(95, 311.5629873524036)
+(96, 309.96775515719605)
+(97, 308.1775145796914)
+(98, 306.36157967210744)
+(99, 303.7470546854735)
+(100, 301.6032712262157)
+(101, 299.58658763455463)
+(102, 297.59165814243556)
+(103, 302.7874814652745)
+(104, 301.5322009357882)
+(105, 299.65828960339167)
+(106, 301.0189267348348)
+(107, 299.35350401740953)
+
+		};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[]
+
+	% \addplot[] is better than \addplot+[] here:
+	% it avoids scalings of the cycle list
+	\addplot
+	[mark=none,blue,
+	 domain=0:100]
+	{248.94};
+	\addplot
+	[mark=none,blue,
+	 domain=0:100]
+	{311.23};
+	\addplot[only marks, color=black, mark=x]
+		coordinates {
+(1, 297.94762211240743)
+(2, 300.95871990988286)
+(3, 304.01447928917923)
+(4, 301.96467692526863)
+(5, 305.2458726181312)
+(6, 302.85326229503636)
+(7, 301.74460738718705)
+(8, 301.08932728294513)
+(9, 302.624250379823)
+(10, 301.3981023053724)
+(11, 300.5816176370146)
+(12, 298.82189426404534)
+(13, 299.9557998861745)
+(14, 302.32115244177686)
+(15, 301.8296385230645)
+(16, 299.67599841264297)
+(17, 301.1504891069315)
+(18, 302.31695095571234)
+(19, 300.40940577467325)
+(20, 298.50265670224474)
+(21, 301.7388011378049)
+(22, 300.24295440609905)
+(23, 300.5021560604667)
+(24, 305.4344288678011)
+(25, 303.7472117878321)
+(26, 307.444366528464)
+(27, 311.0375789771136)
+(28, 317.3734458949964)
+(29, 317.22151865418635)
+(30, 316.2360951606006)
+(31, 315.4027461659316)
+(32, 313.5863093973041)
+(33, 312.14804754275195)
+(34, 312.86129796340794)
+(35, 310.90657004768684)
+(36, 309.3978459258985)
+(37, 310.46795914770075)
+(38, 309.38318577205445)
+(39, 307.95992610170634)
+(40, 306.51555526898375)
+(41, 305.3136352717717)
+(42, 303.81408680501295)
+(43, 302.13770802447914)
+(44, 304.8741615780764)
+(45, 303.77461736128856)
+(46, 302.6372895791856)
+(47, 301.82619346411894)
+(48, 299.97671384512154)
+(49, 299.655928396236)
+(50, 301.57115565332805)
+(51, 299.9124355328389)
+(52, 298.41337339297854)
+(53, 298.27280198965155)
+(54, 298.25008330243134)
+(55, 297.83118352167475)
+(56, 297.654034237125)
+(57, 296.85374699122457)
+(58, 295.3674372134601)
+(59, 294.00051004394805)
+(60, 292.7278333817366)
+(61, 292.94401119184766)
+(62, 292.9364612250187)
+(63, 292.5977472711225)
+(64, 291.15836217073206)
+(65, 293.9265704758843)
+(66, 293.8505661460792)
+(67, 293.99105749599244)
+(68, 295.00120035764905)
+(69, 293.8561779356131)
+(70, 293.3402289559827)
+(71, 292.4409025826008)
+(72, 291.5453997459781)
+(73, 291.474646339224)
+(74, 290.64099381542763)
+(75, 289.8785244511302)
+(76, 288.8274864761255)
+(77, 287.898080787416)
+(78, 288.11805146448506)
+(79, 287.6601647168822)
+(80, 286.3496729534567)
+(81, 286.2800570663224)
+(82, 285.18786605508893)
+(83, 286.36781199385905)
+(84, 286.3503136738479)
+(85, 285.5613717989033)
+(86, 284.363044236921)
+(87, 284.4408019043557)
+(88, 284.96077696321635)
+(89, 283.61806296432815)
+(90, 282.94021961741515)
+(91, 288.3056737199618)
+(92, 289.381286812451)
+(93, 290.0182244970064)
+(94, 288.9820159599387)
+(95, 287.8037889266542)
+(96, 287.6487444903177)
+(97, 286.7545595097285)
+(98, 286.14543312183696)
+(99, 286.1537753297645)
+(100, 285.7683112961135)
+		};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+Poichè 93 su 100 osservazioni sono all'interno del 90 percentile allora il simulatore è convalidato
+
+\paragraph{Test con $M/M/3$}
+Numero di clienti introdotti nel sistema: 12120\\
+Tempo di arrivo medio al sistema calcolato nel simulatore: 102.686412652 (teorico: 103)\\
+Tempo di servizio medio calcolato nel simulatore: 171.753804741 (teorico: 172)\\
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[]
+
+	% \addplot[] is better than \addplot+[] here:
+	% it avoids scalings of the cycle list
+	\addplot
+	[mark=none,red,
+	 domain=0:100]
+	{47};
+	\addplot[only marks, color=black, mark=x]
+		coordinates {
+			(1, 39.91229439555397)
+(2, 36.27650194785951)
+(3, 29.94178999192039)
+(4, 27.328969971181)
+(5, 33.58965191286779)
+(6, 33.06135399630184)
+(7, 45.26015730011824)
+(8, 41.35424353788926)
+(9, 40.77754797519016)
+(10, 42.8444080310589)
+(11, 42.43479650189864)
+(12, 40.50152531558304)
+(13, 38.60396596840149)
+(14, 36.78297573319797)
+(15, 41.64649669467633)
+(16, 41.02092719679061)
+(17, 41.344684223220526)
+(18, 39.41692835148838)
+(19, 46.98284669730903)
+(20, 45.32385941686161)
+(21, 45.92439633210547)
+(22, 44.27764663557947)
+(23, 53.02497769848626)
+(24, 51.778930673071144)
+(25, 50.05260411452522)
+(26, 48.739393681239875)
+(27, 47.6925398166549)
+(28, 47.86508916032685)
+(29, 49.03472828642025)
+(30, 47.46508241306552)
+(31, 46.35496837163559)
+(32, 45.611933002727525)
+(33, 44.38310621079029)
+(34, 43.89221231594306)
+(35, 44.24500910414772)
+(36, 47.47508889760352)
+(37, 46.342744842156826)
+(38, 45.935466213840186)
+(39, 50.692805749521156)
+(40, 49.92360130810081)
+(41, 48.85409204445853)
+(42, 48.08568462056077)
+(43, 47.143456833840176)
+(44, 48.05196267660404)
+(45, 47.10976012717161)
+(46, 46.367836577598496)
+(47, 46.439216132133254)
+(48, 45.775714043604815)
+(49, 45.47035748005397)
+(50, 45.229670250468715)
+(51, 45.07066078990272)
+(52, 44.475338542594756)
+(53, 47.9150763709365)
+(54, 47.66160544083443)
+(55, 48.508877001759075)
+(56, 48.70818191865042)
+(57, 48.264292208623594)
+(58, 49.20204791729448)
+(59, 48.4828534787812)
+(60, 48.35318554895409)
+(61, 47.577036131250885)
+(62, 47.46149507921015)
+(63, 46.744789190790016)
+(64, 47.44330605093511)
+(65, 46.83210761711093)
+(66, 47.287694623009855)
+(67, 47.05895105611891)
+(68, 46.70173272313415)
+(69, 46.321105757034815)
+(70, 45.8315831283863)
+(71, 45.48484257599279)
+(72, 44.90614518435781)
+(73, 44.73596892383455)
+(74, 44.96208844130559)
+(75, 44.92352146491344)
+(76, 44.85506435527568)
+(77, 45.038786803494936)
+(78, 45.959183028602006)
+(79, 45.584668774427584)
+(80, 45.272653832926395)
+(81, 48.56797537706598)
+(82, 48.93961642297095)
+(83, 49.36181551268317)
+(84, 49.02779272393375)
+(85, 48.58092526797781)
+(86, 48.39620185559876)
+(87, 48.08142612475593)
+(88, 47.71316823735078)
+(89, 47.41086373586487)
+(90, 46.92611061274923)
+(91, 47.370492138189164)
+(92, 47.661270978948515)
+(93, 47.50841745963054)
+(94, 47.15372338102797)
+(95, 46.74592925270877)
+(96, 46.34624954755875)
+(97, 45.93827530007154)
+(98, 47.61260209288003)
+(99, 47.7352061988684)
+(100, 47.66280264602995)
+
+
+		};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[]
+
+	% \addplot[] is better than \addplot+[] here:
+	% it avoids scalings of the cycle list
+	\addplot
+	[mark=none,blue,
+	 domain=0:100]
+	{42.94};
+	\addplot
+	[mark=none,blue,
+	 domain=0:100]
+	{48.86};
+	\addplot[only marks, color=black, mark=x]
+		coordinates {
+(1, 47.30920430238781)
+(2, 46.91065731968246)
+(3, 47.208927324057335)
+(4, 47.28718116400319)
+(5, 47.05763586975014)
+(6, 46.889606115887204)
+(7, 47.475699317697675)
+(8, 47.587330709262815)
+(9, 47.62956706776345)
+(10, 47.895136575545244)
+(11, 47.56896700646183)
+(12, 47.2770876666556)
+(13, 46.862376371334065)
+(14, 46.625983529482035)
+(15, 46.93381397198127)
+(16, 47.101820649193165)
+(17, 47.007012134651035)
+(18, 46.658039141169326)
+(19, 46.6549098979025)
+(20, 46.9860725226844)
+(21, 46.67063258871665)
+(22, 47.99208205004935)
+(23, 47.83704628058454)
+(24, 48.09872657083728)
+(25, 48.16504413656175)
+(26, 47.882954029628166)
+(27, 47.693928760489825)
+(28, 47.38430032899766)
+(29, 47.24879410549076)
+(30, 48.50193155951106)
+(31, 48.14317750254686)
+(32, 48.07842877036218)
+(33, 48.03695990846312)
+(34, 47.834352363277866)
+(35, 47.53877353352438)
+(36, 47.29903849891466)
+(37, 47.984753570128476)
+(38, 47.691595973662274)
+(39, 48.00496679346863)
+(40, 47.698599620582975)
+(41, 47.46726497697251)
+(42, 48.031157798604454)
+(43, 48.21022337014767)
+(44, 48.010729736982924)
+(45, 47.90778012723811)
+(46, 47.74401600647504)
+(47, 47.532321172530814)
+(48, 47.27081935993991)
+(49, 48.51320603004209)
+(50, 48.191926519909366)
+(51, 47.93098129180532)
+(52, 47.83077762999527)
+(53, 47.64059744181818)
+(54, 48.15730313273837)
+(55, 47.99712647100648)
+(56, 47.75238827284891)
+(57, 47.59493044048379)
+(58, 47.876980008497455)
+(59, 48.356888405017266)
+(60, 49.103864436465514)
+(61, 48.87158727911498)
+(62, 48.7155972131809)
+(63, 48.64874970433744)
+(64, 48.53786461734728)
+(65, 48.59850493150456)
+(66, 48.319832191731)
+(67, 48.46433409841568)
+(68, 48.26483740241706)
+(69, 48.025314411634625)
+(70, 47.8496398821489)
+(71, 47.69751303793161)
+(72, 48.31692858695386)
+(73, 48.04627089360628)
+(74, 47.89123115329781)
+(75, 48.317794480534594)
+(76, 48.25863776375314)
+(77, 48.009426365980566)
+(78, 48.01351777538577)
+(79, 47.88106985684448)
+(80, 47.650011600748044)
+(81, 47.61977392019847)
+(82, 47.7219023591797)
+(83, 47.65944893232996)
+(84, 47.47322183510958)
+(85, 47.85036997366676)
+(86, 47.60679518230894)
+(87, 47.45413138162226)
+(88, 47.46944040476819)
+(89, 47.23467456343638)
+(90, 47.06065658555258)
+(91, 46.81554899916947)
+(92, 47.593729406350825)
+(93, 47.546578545126074)
+(94, 47.67711018364323)
+(95, 47.57818675236197)
+(96, 47.86866006455102)
+(97, 47.69379549962817)
+(98, 47.799833873703804)
+(99, 47.575251545466344)
+(100, 48.16418116572529)
+		};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+Poichè 98 su 100 osservazioni sono all'interno del 90 percentile allora il simulatore è convalidato.
+
+
+\end{document}
