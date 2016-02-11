@@ -5,12 +5,12 @@ import numpy as np
 # ########################### VARIABILI GLOBALI #####################################
 # ###################################################################################
 
-_numeroServentiSportelloPensioni = 3
+_numeroServentiSportelloPensioni = 2
 _numeroServentiSportelloPacchi = 1
 _tempoServizioTagliaCode = 10
 _tempoServizioSportelloPensioni = 173
 _tempoServizioSportelloPacchi = 240
-_lambdaPArrivi = 110
+_lambdaPArrivi = 103
 _tempoMassimoSimulazione = 5400  # None se non si vuole limite
 _dateTest = datetime.datetime.now().strftime('%Y%m%d_%H-%M-%S')
 

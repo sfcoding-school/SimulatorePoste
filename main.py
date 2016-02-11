@@ -5,7 +5,6 @@ from simulatore import source
 from variabili import getNumClientiTot, getAttesePensioni, getLambda, getMediamuM, _numeroServentiSportelloPensioni, _numeroServentiSportelloPacchi, _tempoServizioTagliaCode, _tempoServizioSportelloPensioni, _tempoServizioSportelloPacchi, _lambdaPArrivi, _tempoMassimoSimulazione, _dateTest
 from validatore import valida
 
-quanteRipetizioni = 1000
 matriceTempiAttesaSportelloPensioni = []
 MediaAtteseTotPensioni = []
 mediaRighe = []
@@ -41,11 +40,9 @@ def main(env):
             finitoIlTest = True
     # test(mediaDelleMedieLista)
     printLog(_dateTest, "numClienti: " + str(getNumClientiTot()))
-    printLog(_dateTest, "tempo arrivo medio: " + str(getLambda()) + " \tTeorico: 110")
+    printLog(_dateTest, "tempo arrivo medio: " + str(getLambda()) + " \tTeorico: 103")
     printLog(_dateTest, "tempo servizio medio:" + str(getMediamuM()[0]) + " \tTeorico: 172")
-    printLog(_dateTest, str(roMaggiori))
-    printLog(_dateTest, str([mediaDelleMedieLista, finale]))
-    printLog(_dateTest, "varianzaDelleMedie" + str(varianzaDelleMedie))
+    printLog(_dateTest, "Numero rho maggiori di 1: " + str(roMaggiori))
     valida(mediaDelleMedieLista, finale)
 
 
@@ -57,7 +54,6 @@ printLog(_dateTest, "_tempoServizioSportelloPensioni = " + str(_tempoServizioSpo
 printLog(_dateTest, "_tempoServizioSportelloPacchi = " + str(_tempoServizioSportelloPacchi))
 printLog(_dateTest, "_lambdaPArrivi = " + str(_lambdaPArrivi))
 printLog(_dateTest, "_tempoMassimoSimulazione = " + str(_tempoMassimoSimulazione))
-printLog(_dateTest, "_quanteRipetizioni = " + str(quanteRipetizioni))
 printLog(_dateTest, "---------------------------------------------------")
 
 # ###################################################################################
