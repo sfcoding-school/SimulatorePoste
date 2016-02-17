@@ -5,9 +5,9 @@ import numpy as np
 # ########################### VARIABILI GLOBALI #####################################
 # ###################################################################################
 
-_numeroServentiSportelloPensioni = 2
+_numeroServentiSportelloPensioni = 3
 _numeroServentiSportelloPacchi = 1
-_tempoServizioTagliaCode = 10
+_tempoServizioTagliaCode = 7.5
 _tempoServizioSportelloPensioni = 173
 _tempoServizioSportelloPacchi = 240
 _lambdaPArrivi = 103

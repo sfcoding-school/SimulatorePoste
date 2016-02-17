@@ -22,9 +22,9 @@ def calcolaVarianzaPensioni(lista):
 
 
 def checkStazio(mMedieLista):
-    temp = mMedieLista[max(0, len(mMedieLista) - 10):]
+    temp = mMedieLista[max(0, len(mMedieLista) - 40):]
     mean = np.mean(temp)
-    for x in range(1, 5):
-        if abs(temp[x+4] - mean) > 2:
+    for x in range(1, 30):
+        if abs(temp[x+9] - mean) > 1:
             return False
     return True

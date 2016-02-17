@@ -17,9 +17,14 @@ def valida(data1, data2):
         if x >= perDieci and x <= perNovanta:
             giusti += 1
 
-    if giusti > 90:
+    printLog(_dateTest, "Percentile 10%: " + str(perDieci))
+    printLog(_dateTest, "Percentile 90%: " + str(perNovanta))
+    printLog(_dateTest, str((float(giusti)*100)/len(data2)))
+    print("Percentile 10%: " + str(perDieci))
+    print("Percentile 90%: " + str(perNovanta))
+    print("Percentuale nel range: " + str(int((float(giusti)*100)/len(data2))) + "%  ", end='')
+    if giusti >= 90:
         print("OK!")
-        printLog(_dateTest, "Percentile 10%" + str(perDieci))
-        printLog(_dateTest, "Percentile 90%" + str(perNovanta))
-        printLog(_dateTest, str((float(giusti)*100)/len(data2)))
-    print("%s" % str((float(giusti)*100)/len(data2)))
+    else:
+        print("\n")
+    # print("%s" % str((float(giusti)*100)/len(data2)))

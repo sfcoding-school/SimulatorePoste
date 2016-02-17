@@ -41,12 +41,18 @@ def main(env):
     # test(mediaDelleMedieLista)
     printLog(_dateTest, "numClienti: " + str(getNumClientiTot()))
     printLog(_dateTest, "tempo arrivo medio: " + str(getLambda()) + " \tTeorico: 103")
-    printLog(_dateTest, "tempo servizio medio:" + str(getMediamuM()[0]) + " \tTeorico: 172")
+    printLog(_dateTest, "tempo servizio medio: " + str(getMediamuM()[0]) + " \tTeorico: 172")
     printLog(_dateTest, "Numero rho maggiori di 1: " + str(roMaggiori))
+    printLog(_dateTest, str(varianzaDelleMedie))
+    print("numClienti: " + str(getNumClientiTot()))
+    print("tempo arrivo medio: " + str(getLambda()) + " \tTeorico: 103")
+    print("tempo servizio medio: " + str(getMediamuM()[0]) + " \tTeorico: 172")
+    print("Numero rho maggiori di 1: " + str(roMaggiori))
+    print("Media tempo di attesa: ", calcolaMedia(mediaDelleMedieLista))
     valida(mediaDelleMedieLista, finale)
 
 
-printLog(_dateTest, "--------SIMULAZIONE POSTE" + _dateTest + "---------")
+printLog(_dateTest, "--------SIMULAZIONE POSTE " + _dateTest + "---------")
 printLog(_dateTest, "_numeroServentiSportelloPensioni = " + str(_numeroServentiSportelloPensioni))
 printLog(_dateTest, "_numeroServentiSportelloPacchi = " + str(_numeroServentiSportelloPacchi))
 printLog(_dateTest, "_tempoServizioTagliaCode = " + str(_tempoServizioTagliaCode))
@@ -55,6 +61,15 @@ printLog(_dateTest, "_tempoServizioSportelloPacchi = " + str(_tempoServizioSport
 printLog(_dateTest, "_lambdaPArrivi = " + str(_lambdaPArrivi))
 printLog(_dateTest, "_tempoMassimoSimulazione = " + str(_tempoMassimoSimulazione))
 printLog(_dateTest, "---------------------------------------------------")
+print("--------SIMULAZIONE POSTE " + _dateTest + "---------")
+print("_numeroServentiSportelloPensioni = " + str(_numeroServentiSportelloPensioni))
+print("_numeroServentiSportelloPacchi = " + str(_numeroServentiSportelloPacchi))
+print("_tempoServizioTagliaCode = " + str(_tempoServizioTagliaCode))
+print("_tempoServizioSportelloPensioni = " + str(_tempoServizioSportelloPensioni))
+print("_tempoServizioSportelloPacchi = " + str(_tempoServizioSportelloPacchi))
+print("_lambdaPArrivi = " + str(_lambdaPArrivi))
+print("_tempoMassimoSimulazione = " + str(_tempoMassimoSimulazione))
+print("---------------------------------------------------")
 
 # ###################################################################################
 # ################################ AVVIO ############################################
